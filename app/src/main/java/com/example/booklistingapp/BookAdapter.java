@@ -32,9 +32,8 @@ public class    BookAdapter extends ArrayAdapter {
 
         Book currentBook = (Book) getItem(position);
 
-//        ImageView image = listItemView.findViewById(R.id.image);
-//        Picasso.with(getContext()).load(currentBook.getImage()).into(image);
-//        image.setImageBitmap(currentBook.getImage());
+        ImageView image = listItemView.findViewById(R.id.image);
+        image.setImageBitmap(currentBook.getImage());
 
         TextView tittle = listItemView.findViewById(R.id.tittle);
         tittle.setText(currentBook.getTittle());

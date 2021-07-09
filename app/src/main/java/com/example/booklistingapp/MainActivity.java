@@ -22,7 +22,7 @@ import static android.content.ContentValues.TAG;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String urldata = "https://www.googleapis.com/books/v1/volumes?q=";
+    private final String urldata = "https://www.googleapis.com/books/v1/volumes?q=naruto";
     private String url;
     private ImageView imageView;
     private TextView textView;
@@ -42,14 +42,16 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
 
         BookAsyncTask task = new BookAsyncTask();
+        task.execute(urldata);
+
         // Get the intent, verify the action and get the query
-        Intent intent = getIntent();
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            url = urldata + query;
-            Log.e(TAG, "onCreate: "+url );
-            task.execute(url);
-        }
+//        Intent intent = getIntent();
+//        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+//            String query = intent.getStringExtra(SearchManager.QUERY);
+//            url = urldata + query;
+//            Log.e(TAG, "onCreate: "+url );
+//            task.execute(url);
+//        }
 //        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 //            @Override
 //            public boolean onQueryTextSubmit(String newText) {

@@ -111,7 +111,12 @@ public final class QueryUtils {
                 JSONArray author = volumeInfo.getJSONArray("authors");
                 String authors = author.optString(0);
 
-                Bitmap image = null;
+                JSONObject imageObject = volumeInfo.optJSONObject("imageLinks");
+                String imageLink = imageObject.optString("thumbnail");
+                imageLink = imageLink.replace("http","https");
+                URL imageUrl = new URL(imageLink);
+                Bitmap image = BitmapFactory.decodeStream(imageUrl.openConnection().getInputStream());
+
                 String description = volumeInfo.optString("description");
 
                 JSONObject accessInfo = items.optJSONObject("accessInfo");
@@ -120,7 +125,7 @@ public final class QueryUtils {
                 //Adding the value in ArrayList
                 book.add(new Book(image, title, authors, description, url));
             }
-        } catch (JSONException e) {
+        } catch (Exception e) {
             Log.e("QueryUtils", "Problem parsing the Book JSON results", e);
         }
         return book;
