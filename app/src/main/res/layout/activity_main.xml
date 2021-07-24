@@ -11,6 +11,12 @@
         android:layout_height="230dp"
         android:src="@drawable/book" />
 
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
     <ProgressBar
         android:id="@+id/prgoressbar"
         style="@style/Widget.AppCompat.ProgressBar"

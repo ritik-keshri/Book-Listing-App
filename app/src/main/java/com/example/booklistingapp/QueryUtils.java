@@ -19,8 +19,6 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import static com.example.booklistingapp.MainActivity.LOG_TAG;
-
 public final class QueryUtils {
 
     public static List<Book> fetchBookData(String requestUrl) {
@@ -47,7 +45,7 @@ public final class QueryUtils {
     }
 
     private static String makeHttpRequest(URL url) throws IOException {
-        String jsonRespnse = null;
+        String jsonResponse = null;
         HttpsURLConnection urlConnection = null;
         InputStream inputStream = null;
         try {
@@ -58,9 +56,9 @@ public final class QueryUtils {
             urlConnection.connect();
             if (urlConnection.getResponseCode() == 200) {
                 inputStream = urlConnection.getInputStream();
-                jsonRespnse = readFromStream(inputStream);
+                jsonResponse = readFromStream(inputStream);
             } else
-                Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
+                Log.e("Query Utils", "Error response code: " + urlConnection.getResponseCode());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -70,7 +68,7 @@ public final class QueryUtils {
                 // Closing the input stream could throw an IOException, which is why the makeHttpRequest(URL url) method signature specifies than an IOException could be thrown.
                 inputStream.close();
         }
-        return jsonRespnse;
+        return jsonResponse;
     }
 
     //Convert the InputStream into a String which contains the whole JSON response from the server.
@@ -89,7 +87,8 @@ public final class QueryUtils {
     }
 
     private static List<Book> extractFeaturesFromJson(String JsonResponse) {
-
+        String title = null, authors = null, description = null;
+        Bitmap image = null;
         List<Book> book = new ArrayList<>();
         if (JsonResponse == null)
             return book;
@@ -104,18 +103,24 @@ public final class QueryUtils {
                 JSONObject items = bookArray.optJSONObject(i);
                 JSONObject volumeInfo = items.optJSONObject("volumeInfo");
 
-                String title = volumeInfo.optString("title");
+                if (volumeInfo.has("title"))
+                    title = "Tittle : " + volumeInfo.getString("title");
 
-                JSONArray author = volumeInfo.getJSONArray("authors");
-                String authors = author.optString(0);
+                if (volumeInfo.has("authors")) {
+                    JSONArray author = volumeInfo.getJSONArray("authors");
+                    authors = "Author : " + author.optString(0);
+                }
 
-                JSONObject imageObject = volumeInfo.optJSONObject("imageLinks");
-                String imageLink = imageObject.optString("thumbnail");
-                imageLink = imageLink.replace("http","https");
-                URL imageUrl = new URL(imageLink);
-                Bitmap image = BitmapFactory.decodeStream(imageUrl.openConnection().getInputStream());
+                if (volumeInfo.has("imageLinks")) {
+                    JSONObject imageObject = volumeInfo.optJSONObject("imageLinks");
+                    String imageLink = imageObject.optString("thumbnail");
+                    imageLink = imageLink.replace("http", "https");
+                    URL imageUrl = new URL(imageLink);
+                    image = BitmapFactory.decodeStream(imageUrl.openConnection().getInputStream());
+                }
 
-                String description = volumeInfo.optString("description");
+                if (volumeInfo.has("description"))
+                    description = "Des : " + volumeInfo.optString("description");
 
                 JSONObject accessInfo = items.optJSONObject("accessInfo");
                 String url = accessInfo.optString("webReaderLink");

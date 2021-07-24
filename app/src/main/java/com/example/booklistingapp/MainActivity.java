@@ -1,9 +1,11 @@
 package com.example.booklistingapp;
 
-import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,10 +27,10 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     private String url;
     private ImageView imageView;
     private SearchView searchView;
+    private TextView textView;
     private ListView listView;
     private BookAdapter adapter;
     private ProgressBar progressBar;
-    public static final String LOG_TAG = Book.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +39,21 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
         init();
 
+        //To check network connection is there or not.
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        // Get details on the currently active default data network
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        boolean isConnected = networkInfo != null && networkInfo.isConnected();
+        if (!isConnected) {
+            textView.setText(R.string.no_internet_connection);
+            progressBar.setVisibility(View.GONE);
+        } else
+            getLoaderManager().initLoader(0, null, this);
+
+
         adapter = new BookAdapter(this, new ArrayList<Book>());
         listView.setAdapter(adapter);
-
-        LoaderManager loaderManager = getLoaderManager();
-        loaderManager.initLoader(1, null, this).forceLoad();
 
         // perform set on query text listener event
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -79,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         listView = findViewById(R.id.list);
         searchView = findViewById(R.id.search);
         imageView = findViewById(R.id.logo);
+        textView = findViewById(R.id.text);
         progressBar = findViewById(R.id.prgoressbar);
     }
 
@@ -98,8 +112,9 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     @Override
     public void onLoadFinished(Loader<List<Book>> loader, List<Book> data) {
-        adapter.clear();
+        //if earthquake data is empty
         progressBar.setVisibility(View.GONE);
+        adapter.clear();
         if (data != null && !data.isEmpty()) {
             adapter.addAll(data);
         }
