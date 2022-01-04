@@ -46,11 +46,10 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
         boolean isConnected = networkInfo != null && networkInfo.isConnected();
         if (!isConnected) {
-            textView.setText(R.string.no_internet_connection);
+        textView.setText(R.string.no_internet_connection);
             progressBar.setVisibility(View.GONE);
         } else
             getLoaderManager().initLoader(0, null, this);
-
 
         adapter = new BookAdapter(this, new ArrayList<Book>());
         listView.setAdapter(adapter);
@@ -107,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     @Override
     public Loader<List<Book>> onCreateLoader(int i, Bundle bundle) {
         progressBar.setVisibility(View.VISIBLE);
+        textView.setVisibility(View.GONE);
         return new BookLoader(this, url);
     }
 
